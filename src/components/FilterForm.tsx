@@ -39,7 +39,7 @@ const FilterForm = ({
     const formData = new FormData(target);
 
     const filter = {
-      search: formData.get("search"),
+      search: formData.get("search")?.toString().toLowerCase(),
       sort: formData.get("sort"),
       regions: formData.getAll("region"),
       isUnMember: formData.get("unMember") === "on" ? true : false,

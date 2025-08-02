@@ -3,16 +3,13 @@ import fetchCountriesData from "../api/countriesAPI";
 import { useState, useEffect } from "react";
 import FilterForm from "../components/FilterForm";
 
-const regions = [
-  "americas",
-  "antarctic",
-  "africa",
-  "asia",
-  "europe",
-  "oceania",
-] as const;
-
-type Regions = (typeof regions)[number];
+type Regions =
+  | "americas"
+  | "antarctic"
+  | "africa"
+  | "asia"
+  | "europe"
+  | "oceania";
 
 export interface Filter {
   search: string;
@@ -23,16 +20,7 @@ export interface Filter {
 }
 
 function Home() {
-  const [countries, setCountries] = useState<Country[]>([]);
-
-  useEffect(() => {
-    const getCountries = async () => {
-      const data = await fetchCountriesData();
-      setCountries((prev) => [...prev, ...data]);
-    };
-    // getCountries();
-  }, []);
-
+  const [countriesData, setCountriesData] = useState<Country[]>([]);
   const [filter, setFilter] = useState<Filter>({
     search: "",
     sort: "population",
@@ -40,8 +28,74 @@ function Home() {
     isUnMember: false,
     isIndependent: false,
   });
+  const [updatedCountriesData, setUpdatedCountriesData] = useState<Country[]>(
+    [],
+  );
 
-  useEffect(() => console.log(filter), [filter]);
+  useEffect(() => {
+    const getCountries = async () => {
+      const data = await fetchCountriesData();
+      setCountriesData(data);
+    };
+    getCountries();
+  }, []);
+
+  // Update updatedCountriesData array if filter object changes
+  useEffect(() => {
+    let filteredAndSortedCountries = [...countriesData];
+    if (filter.search.length > 0) {
+      const query = filter.search;
+      filteredAndSortedCountries = filteredAndSortedCountries.filter(
+        (country) =>
+          country?.region?.toLowerCase().includes(query) ||
+          country?.subregion?.toLowerCase().includes(query) ||
+          country?.name?.common?.toLowerCase().includes(query) ||
+          country?.name?.official?.toLowerCase().includes(query),
+      );
+    }
+
+    if (filter.sort === "population") {
+      filteredAndSortedCountries.sort((a, b) => a.population - b.population);
+    }
+
+    if (filter.sort === "name") {
+      filteredAndSortedCountries.sort((a, b) => {
+        const nameA = a.name.common.toLowerCase();
+        const nameB = b.name.common.toLowerCase();
+
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+      });
+    }
+
+    if (filter.sort === "area") {
+      filteredAndSortedCountries.sort((a, b) => a.area - b.area);
+    }
+
+    if (filter.regions.length > 0) {
+      filteredAndSortedCountries = filteredAndSortedCountries.filter(
+        (country) =>
+          filter.regions.includes(country.region.toLowerCase() as Regions),
+      );
+    }
+
+    if (filter.isIndependent && filter.isUnMember) {
+      filteredAndSortedCountries = filteredAndSortedCountries.filter(
+        (country) => country.independent && country.unMember,
+      );
+    } else if (filter.isIndependent) {
+      filteredAndSortedCountries = filteredAndSortedCountries.filter(
+        (country) => country.independent,
+      );
+    } else if (filter.isUnMember) {
+      filteredAndSortedCountries = filteredAndSortedCountries.filter(
+        (country) => country.unMember,
+      );
+    }
+
+    setUpdatedCountriesData(filteredAndSortedCountries);
+  }, [countriesData, filter]);
 
   return (
     <>
@@ -49,7 +103,7 @@ function Home() {
         <img src={Logo} alt="World Ranks Logo" className="mx-auto" />
       </div>
       <div className="border-secondary bg-primary mx-4 -mt-32 space-y-8 rounded-xl border-1 px-4 py-8">
-        <p className="font-semibold">Found {countries.length} countries</p>
+        <p className="font-semibold">Found {countriesData.length} countries</p>
         <FilterForm filterBy={setFilter} />
       </div>
     </>

@@ -5,12 +5,6 @@ declare global {
     name: {
       common: string;
       official: string;
-      nativeName: {
-        ron: {
-          official: string;
-          common: string;
-        };
-      };
     };
     independent: boolean;
     unMember: boolean;
