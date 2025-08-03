@@ -99,12 +99,14 @@ function Home() {
 
   return (
     <>
-      <div className="aspect-[4/3] bg-[url(/hero-image-sm.jpg)] bg-cover bg-center bg-no-repeat p-8">
+      <div className="aspect-[4/3] max-h-[400px] w-full bg-[url(/hero-image-sm.jpg)] bg-cover bg-center bg-no-repeat px-8 pt-[min(20vw,_150px)] pb-32 md:bg-[url(/hero-image.jpg)]">
         <img src={Logo} alt="World Ranks Logo" className="mx-auto" />
       </div>
-      <div className="border-secondary bg-primary mx-4 -mt-32 space-y-8 rounded-xl border-1 px-4 py-8">
-        <p className="font-semibold">Found {countriesData.length} countries</p>
-        <FilterForm filterBy={setFilter} />
+      <div className="border-secondary bg-primary mx-4 -mt-32 space-y-8 rounded-xl border-1 px-4 py-8 md:-mt-16">
+        <FilterForm
+          countriesLength={countriesData.length}
+          filterBy={setFilter}
+        />
       </div>
     </>
   );

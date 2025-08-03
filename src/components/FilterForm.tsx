@@ -6,8 +6,10 @@ import SearchIcon from "../assets/SearchIcon";
 import DoneRound from "../assets/DoneRound";
 
 const FilterForm = ({
+  countriesLength,
   filterBy,
 }: {
+  countriesLength: number;
   filterBy: React.Dispatch<React.SetStateAction<Filter>>;
 }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -59,15 +61,18 @@ const FilterForm = ({
       onSubmit={handleSubmit}
       onChange={handleFormChange}
     >
-      <div className="bg-secondary flex w-full items-center justify-center gap-2 rounded-lg p-2">
-        <SearchIcon aria-hidden="true" className="text-accent-light" />
-        <input
-          type="search"
-          name="search"
-          id="search"
-          placeholder={`Search by Name, Region${screenWidth <= 1024 ? "..." : ", SubRegion"}`}
-          className="placeholder:text-accent-light text-md w-[220px] border-none outline-0"
-        />
+      <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-0">
+        <p className="font-semibold">Found {countriesLength} countries</p>
+        <div className="bg-secondary flex w-full max-w-sm items-center justify-center gap-2 rounded-lg p-2">
+          <SearchIcon aria-hidden="true" className="text-accent-light" />
+          <input
+            type="search"
+            name="search"
+            id="search"
+            placeholder={`Search by Name, Region${screenWidth <= 1024 ? "..." : ", SubRegion"}`}
+            className="placeholder:text-accent-light text-md w-[220px] border-none outline-0 md:w-full"
+          />
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="sort" className="text-sm">

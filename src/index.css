@@ -8,6 +8,9 @@
   --color-highlight: #4e80ee;
   --color-accent-secondary: #6c727f;
   --color-accent-light: #d2d5da;
+
+  --breakpoint-md: 412px;
+  --breakpoint-lg: 1024px;
 }
 
 @layer base {
