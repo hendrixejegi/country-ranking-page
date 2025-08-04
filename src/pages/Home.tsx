@@ -1,9 +1,10 @@
 import Logo from "/src/assets/Logo.svg";
 import fetchCountriesData from "../api/countriesAPI";
 import { useState, useEffect } from "react";
-import FilterForm from "../components/FilterForm";
+import SearchIcon from "../assets/SearchIcon";
+import SortComponent from "../components/SortComponent";
 
-type Regions =
+export type Regions =
   | "americas"
   | "antarctic"
   | "africa"
@@ -31,6 +32,13 @@ function Home() {
   const [updatedCountriesData, setUpdatedCountriesData] = useState<Country[]>(
     [],
   );
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const setCurrentWidth = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", setCurrentWidth);
+    return () => window.removeEventListener("resize", setCurrentWidth);
+  }, []);
 
   useEffect(() => {
     const getCountries = async () => {
@@ -103,10 +111,31 @@ function Home() {
         <img src={Logo} alt="World Ranks Logo" className="mx-auto" />
       </div>
       <div className="border-secondary bg-primary mx-4 -mt-32 space-y-8 rounded-xl border-1 px-4 py-8 md:-mt-16">
-        <FilterForm
-          countriesLength={countriesData.length}
-          filterBy={setFilter}
-        />
+        <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-0">
+          <p className="font-semibold">
+            Found {countriesData.length} countries
+          </p>
+          <div className="bg-secondary flex w-full max-w-sm items-center justify-center gap-2 rounded-lg p-2">
+            <SearchIcon aria-hidden="true" className="text-accent-light" />
+            <input
+              type="search"
+              name="search"
+              id="search"
+              placeholder={`Search by Name, Region${screenWidth <= 1024 ? "..." : ", SubRegion"}`}
+              className="placeholder:text-accent-light text-md w-[220px] border-none outline-0 md:w-full"
+              onChange={(event) => {
+                setFilter((prev) => ({
+                  ...prev,
+                  search: event.target.value,
+                }));
+              }}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-[312px_1fr]">
+          <SortComponent filter={filter} sortBy={setFilter} />
+          <div></div>
+        </div>
       </div>
     </>
   );
