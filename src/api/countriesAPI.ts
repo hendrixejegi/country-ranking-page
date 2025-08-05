@@ -3,7 +3,7 @@ const fetchCountriesData = async () => {
 
   try {
     const response = await fetch(
-      "https://restcountries.com/v3.1/all?fields=flag,name,population,area,region,subregion,independent,unMember",
+      "https://restcountries.com/v3.1/all?fields=cca2,name,population,area,region,subregion,independent,unMember",
     );
 
     if (!response.ok) {

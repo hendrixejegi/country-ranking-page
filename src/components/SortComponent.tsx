@@ -4,10 +4,8 @@ import DoneRound from "../assets/DoneRound";
 import type { Filter, Regions } from "../pages/Home";
 
 const SortComponent = ({
-  filter,
   sortBy,
 }: {
-  filter: Filter;
   sortBy: React.Dispatch<React.SetStateAction<Filter>>;
 }) => {
   const [selectedRegions, setSelectedRegions] = useState<Regions[]>([]);
@@ -101,7 +99,7 @@ const SortComponent = ({
             <span>
               <DoneRound className="text-accent-light size-5" />
             </span>
-            <label htmlFor="unMember" className="cursor-pointer">
+            <label htmlFor="unMember" className="cursor-pointer text-sm">
               Member of the United Nations
             </label>
           </div>
@@ -116,7 +114,7 @@ const SortComponent = ({
             <span>
               <DoneRound className="text-accent-light size-5" />
             </span>
-            <label htmlFor="independent" className="cursor-pointer">
+            <label htmlFor="independent" className="cursor-pointer text-sm">
               Independent
             </label>
           </div>

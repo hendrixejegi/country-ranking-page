@@ -11,7 +11,7 @@ declare global {
     region: string;
     subregion: string;
     area: number;
-    flag: string;
+    cca2: string;
     population: number;
   }
 }
