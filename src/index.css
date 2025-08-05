@@ -8,6 +8,9 @@
   --color-highlight: #4e80ee;
   --color-accent-secondary: #6c727f;
   --color-accent-light: #d2d5da;
+
+  --breakpoint-md: 412px;
+  --breakpoint-lg: 1024px;
 }
 
 @layer base {
@@ -43,4 +46,16 @@
       @apply block;
     }
   }
+}
+
+.country-table thead tr {
+  @apply border-secondary border-b-2;
+}
+
+.country-table th,
+.country-table td {
+  max-width: 150px;
+  word-wrap: break-word;
+  padding-block: 16px;
+  text-align: left;
 }

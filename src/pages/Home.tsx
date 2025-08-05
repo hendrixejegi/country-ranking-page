@@ -1,9 +1,11 @@
 import Logo from "/src/assets/Logo.svg";
 import fetchCountriesData from "../api/countriesAPI";
 import { useState, useEffect } from "react";
-import FilterForm from "../components/FilterForm";
+import SearchIcon from "../assets/SearchIcon";
+import SortComponent from "../components/SortComponent";
+import CountryRanking from "../components/CountryRanking";
 
-type Regions =
+export type Regions =
   | "americas"
   | "antarctic"
   | "africa"
@@ -31,6 +33,13 @@ function Home() {
   const [updatedCountriesData, setUpdatedCountriesData] = useState<Country[]>(
     [],
   );
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const setCurrentWidth = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", setCurrentWidth);
+    return () => window.removeEventListener("resize", setCurrentWidth);
+  }, []);
 
   useEffect(() => {
     const getCountries = async () => {
@@ -40,9 +49,10 @@ function Home() {
     getCountries();
   }, []);
 
-  // Update updatedCountriesData array if filter object changes
+  // Update updatedCountriesData array if countriesData or filter object changes
   useEffect(() => {
     let filteredAndSortedCountries = [...countriesData];
+
     if (filter.search.length > 0) {
       const query = filter.search;
       filteredAndSortedCountries = filteredAndSortedCountries.filter(
@@ -56,9 +66,7 @@ function Home() {
 
     if (filter.sort === "population") {
       filteredAndSortedCountries.sort((a, b) => a.population - b.population);
-    }
-
-    if (filter.sort === "name") {
+    } else if (filter.sort === "name") {
       filteredAndSortedCountries.sort((a, b) => {
         const nameA = a.name.common.toLowerCase();
         const nameB = b.name.common.toLowerCase();
@@ -67,9 +75,7 @@ function Home() {
         if (nameA > nameB) return 1;
         return 0;
       });
-    }
-
-    if (filter.sort === "area") {
+    } else if (filter.sort === "area") {
       filteredAndSortedCountries.sort((a, b) => a.area - b.area);
     }
 
@@ -99,12 +105,37 @@ function Home() {
 
   return (
     <>
-      <div className="aspect-[4/3] bg-[url(/hero-image-sm.jpg)] bg-cover bg-center bg-no-repeat p-8">
+      <div className="aspect-[4/3] max-h-[300px] w-full bg-[url(/hero-image-sm.jpg)] bg-cover bg-center bg-no-repeat px-8 pt-[min(20vw,_120px)] pb-32 md:bg-[url(/hero-image.jpg)]">
         <img src={Logo} alt="World Ranks Logo" className="mx-auto" />
       </div>
-      <div className="border-secondary bg-primary mx-4 -mt-32 space-y-8 rounded-xl border-1 px-4 py-8">
-        <p className="font-semibold">Found {countriesData.length} countries</p>
-        <FilterForm filterBy={setFilter} />
+      <div className="border-secondary bg-primary mx-auto -mt-32 max-w-[1350px] space-y-8 rounded-xl border-1 px-4 py-8 md:-mt-16">
+        <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-0">
+          <p className="font-semibold">
+            Found {updatedCountriesData.length} countries
+          </p>
+          <div className="bg-secondary flex w-full max-w-sm items-center justify-center gap-2 rounded-lg p-2">
+            <SearchIcon aria-hidden="true" className="text-accent-light" />
+            <input
+              type="search"
+              name="search"
+              id="search"
+              placeholder={`Search by Name, Region${screenWidth <= 1024 ? "..." : ", SubRegion"}`}
+              className="placeholder:text-accent-light text-md w-[220px] border-none outline-0 md:w-full"
+              onChange={(event) => {
+                setFilter((prev) => ({
+                  ...prev,
+                  search: event.target.value,
+                }));
+              }}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[250px_1fr]">
+          <SortComponent sortBy={setFilter} />
+          <div>
+            <CountryRanking countries={updatedCountriesData} />
+          </div>
+        </div>
       </div>
     </>
   );

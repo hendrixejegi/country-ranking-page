@@ -1,74 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { type Filter } from "../pages/Home";
 import { cn } from "../lib/utils";
-
-import SearchIcon from "../assets/SearchIcon";
 import DoneRound from "../assets/DoneRound";
+import type { Filter, Regions } from "../pages/Home";
 
-const FilterForm = ({
-  filterBy,
+const SortComponent = ({
+  sortBy,
 }: {
-  filterBy: React.Dispatch<React.SetStateAction<Filter>>;
+  sortBy: React.Dispatch<React.SetStateAction<Filter>>;
 }) => {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const setCurrentWidth = () => setScreenWidth(window.innerWidth);
-    window.addEventListener("resize", setCurrentWidth);
-    return () => window.removeEventListener("resize", setCurrentWidth);
-  }, []);
-
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
+  const [selectedRegions, setSelectedRegions] = useState<Regions[]>([]);
+  const [isUnMember, setIsUnMember] = useState(false);
+  const [isIndependent, setIsIndependent] = useState(false);
 
   const updateSelectedRegions = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const id = event.target.id;
+    const value = event.target.value as Regions;
 
-    if (selectedRegions.includes(id)) {
-      setSelectedRegions((prev) => prev.filter((reg) => reg !== id));
+    if (selectedRegions.includes(value)) {
+      setSelectedRegions((prev) => prev.filter((reg) => reg !== value));
     } else {
-      setSelectedRegions((prev) => [...prev, id]);
+      setSelectedRegions((prev) => [...prev, value]);
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const target = event.target as HTMLFormElement;
-    const formData = new FormData(target);
-
-    const filter = {
-      search: formData.get("search")?.toString().toLowerCase(),
-      sort: formData.get("sort"),
-      regions: formData.getAll("region"),
-      isUnMember: formData.get("unMember") === "on" ? true : false,
-      isIndependent: formData.get("independent") === "on" ? true : false,
-    };
-
-    filterBy(filter as Filter);
-  };
-
-  const handleFormChange = (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.currentTarget.requestSubmit();
-  };
+  useEffect(() => {
+    if (typeof sortBy === "function") {
+      sortBy((prev) => ({
+        ...prev,
+        regions: selectedRegions,
+        isIndependent,
+        isUnMember,
+      }));
+    }
+  }, [sortBy, selectedRegions, isIndependent, isUnMember]);
 
   return (
-    <form
-      className="space-y-8"
-      onSubmit={handleSubmit}
-      onChange={handleFormChange}
-    >
-      <div className="bg-secondary flex w-full items-center justify-center gap-2 rounded-lg p-2">
-        <SearchIcon aria-hidden="true" className="text-accent-light" />
-        <input
-          type="search"
-          name="search"
-          id="search"
-          placeholder={`Search by Name, Region${screenWidth <= 1024 ? "..." : ", SubRegion"}`}
-          className="placeholder:text-accent-light text-md w-[220px] border-none outline-0"
-        />
-      </div>
+    <div className="space-y-8">
       <div className="flex flex-col gap-2">
         <label htmlFor="sort" className="text-sm">
           Sort by
@@ -78,6 +46,9 @@ const FilterForm = ({
           id="sort"
           defaultValue="population"
           className="border-secondary *:bg-secondary rounded-lg border-1 px-4 py-2 outline-none *:py-2"
+          onChange={(event) =>
+            sortBy((prev) => ({ ...prev, sort: event.target.value }))
+          }
         >
           <option value="population">Population</option>
           <option value="name">Name</option>
@@ -94,7 +65,9 @@ const FilterForm = ({
                   htmlFor={region}
                   className={cn(
                     "inline-block cursor-pointer rounded-xl px-3 py-2 text-sm capitalize transition-colors duration-150",
-                    selectedRegions.includes(region) ? "bg-secondary" : "",
+                    selectedRegions.includes(region as Regions)
+                      ? "bg-secondary"
+                      : "",
                   )}
                 >
                   {region}
@@ -121,11 +94,12 @@ const FilterForm = ({
               name="unMember"
               id="unMember"
               className="absolute opacity-0"
+              onChange={() => setIsUnMember((prev) => !prev)}
             />
             <span>
               <DoneRound className="text-accent-light size-5" />
             </span>
-            <label htmlFor="unMember" className="cursor-pointer">
+            <label htmlFor="unMember" className="cursor-pointer text-sm">
               Member of the United Nations
             </label>
           </div>
@@ -135,18 +109,19 @@ const FilterForm = ({
               name="independent"
               id="independent"
               className="absolute opacity-0"
+              onChange={() => setIsIndependent((prev) => !prev)}
             />
             <span>
               <DoneRound className="text-accent-light size-5" />
             </span>
-            <label htmlFor="independent" className="cursor-pointer">
+            <label htmlFor="independent" className="cursor-pointer text-sm">
               Independent
             </label>
           </div>
         </div>
       </fieldset>
-    </form>
+    </div>
   );
 };
 
-export default FilterForm;
+export default SortComponent;
