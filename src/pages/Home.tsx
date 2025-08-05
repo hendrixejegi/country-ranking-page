@@ -132,7 +132,7 @@ function Home() {
         </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-[250px_1fr]">
           <SortComponent sortBy={setFilter} />
-          <div>
+          <div className="space-y-8">
             <CountryRanking countries={updatedCountriesData} />
           </div>
         </div>
