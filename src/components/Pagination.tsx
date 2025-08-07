@@ -22,7 +22,6 @@ const Pagination = ({
     pageSize,
   }) as (string | number)[];
 
-  // If there are less than 2 times in pagination range we shall not render the component
   if (currentPage === 0 || paginationRange.length < 2) {
     return null;
   }
@@ -47,7 +46,6 @@ const Pagination = ({
         <div className="arrow left" />
       </li>
       {paginationRange.map((pageNumber, idx) => {
-        // If the pageItem is a DOT, render the DOTS unicode character
         if (pageNumber === DOTS) {
           return (
             <li key={idx} className="pagination-item dots">
@@ -56,7 +54,6 @@ const Pagination = ({
           );
         }
 
-        // Render our Page Pills
         return (
           <li
             key={idx}
