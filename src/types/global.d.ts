@@ -28,6 +28,13 @@ declare global {
     continents?: string[];
   }
 
+  interface Neighbor {
+    name?: {
+      official?: string;
+    };
+    cca2?: string;
+  }
+
   type Languages = NonNullable<CountryInfo["languages"]>;
   type CurrencyType = NonNullable<CountryInfo["currencies"]>;
   type CurrencyEntry = CurrencyType[string];

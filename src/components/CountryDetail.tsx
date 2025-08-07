@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchCountryData from "../api/fetchCountry";
+import fetchNeighbor from "../api/fetchNeighbor";
+import { Link } from "react-router";
 
 const CountryDetail = () => {
   const { slug } = useParams();
 
   const [country, setCountry] = useState<CountryInfo>({});
+  const [neighbors, setNeighbors] = useState<Neighbor[]>([]);
 
   useEffect(() => {
     const getCountry = async () => {
@@ -15,18 +18,33 @@ const CountryDetail = () => {
     getCountry();
   }, [slug]);
 
-  useEffect(() => console.log(country), [country]);
+  useEffect(() => {
+    const getNeighbors = async () => {
+      if (!country || !country.borders?.length) return;
+
+      const promises = country.borders.map((code) => fetchNeighbor(code));
+      const results = await Promise.all(promises);
+      setNeighbors(results);
+    };
+
+    getNeighbors();
+  }, [country]);
 
   const renderLanguages = (obj: Languages) => {
     return Object.values(obj).join(", ");
   };
 
   const renderCurrency = (obj: CurrencyType) => {
-    return obj[Object.keys(obj)[0]]?.name;
+    return Object.entries(obj).length > 0
+      ? obj[Object.keys(obj)[0]]?.name
+      : "No Currency";
   };
 
   return (
     <>
+      <div className="hover:text-highlight fixed top-8 left-8 font-semibold">
+        <Link to={"/"}>&#8592; Back to Home</Link>
+      </div>
       <div className="border-b-secondary space-y-8 border-b-1 p-12">
         <div className="mx-auto -mt-20 w-fit">
           <span
@@ -54,11 +72,15 @@ const CountryDetail = () => {
       </div>
       <div className="border-b-secondary flex items-center justify-between border-b-1 p-6">
         <div>Capital</div>
-        <div>{country?.capital}</div>
+        <div>
+          {(country?.capital?.length ?? 0 > 0)
+            ? country?.capital
+            : "No Capital"}
+        </div>
       </div>
       <div className="border-b-secondary flex items-center justify-between border-b-1 p-6">
         <div>Subregion</div>
-        <div>{country?.subregion}</div>
+        <div>{country?.subregion ? country.subregion : "No Subregion"}</div>
       </div>
       <div className="border-b-secondary flex items-center justify-between border-b-1 p-6">
         <div>Language</div>
@@ -71,6 +93,37 @@ const CountryDetail = () => {
       <div className="border-b-secondary flex items-center justify-between border-b-1 p-6">
         <div>Continents</div>
         <div>{country?.continents?.join(", ")}</div>
+      </div>
+      <div className="space-y-8 p-6">
+        <div>Neighboring Countries</div>
+
+        {neighbors.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-8">
+            {neighbors.map((neighbor, idx) => (
+              <div
+                key={idx}
+                className="transition-all duration-150 hover:scale-[1.1]"
+              >
+                <Link
+                  to={`/country/${neighbor?.name?.official?.replaceAll(" ", "%20").toLowerCase()}`}
+                  onClick={() =>
+                    window.scroll({
+                      top: 0,
+                      left: 0,
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  <span
+                    className={`fi fi-${neighbor?.cca2?.toLowerCase()} rounded-md text-8xl`}
+                  ></span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center">No Neighboring Country</p>
+        )}
       </div>
     </>
   );
