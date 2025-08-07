@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
 import Pagination from "./Pagination";
+import { useNavigate } from "react-router";
 
 const PageSize = 10;
 
 const CountryRanking = ({ countries }: { countries: Country[] }) => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
 
   const currentTableData = useMemo(() => {
@@ -28,10 +30,18 @@ const CountryRanking = ({ countries }: { countries: Country[] }) => {
         </thead>
         <tbody>
           {currentTableData.map((country, idx) => (
-            <tr key={idx}>
+            <tr
+              key={idx}
+              className="hover:bg-secondary cursor-pointer"
+              onClick={() =>
+                navigate(
+                  `/country/${country?.name?.official?.replaceAll(" ", "%20").toLowerCase()}`,
+                )
+              }
+            >
               <td>
                 <span
-                  className={`fi fi-${country.cca2.toLowerCase()} rounded-md text-4xl`}
+                  className={`fi fi-${country?.cca2?.toLowerCase()} rounded-md text-4xl`}
                 ></span>
               </td>
               <td>{country?.name?.common}</td>
