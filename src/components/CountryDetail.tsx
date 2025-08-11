@@ -42,13 +42,13 @@ const CountryDetail = () => {
 
   return (
     <>
-      <div className="hover:text-highlight fixed top-8 left-8 font-semibold">
+      <div className="hover:text-highlight absolute top-8 left-8 font-semibold lg:fixed">
         <Link to={"/"}>&#8592; Back to Home</Link>
       </div>
       <div className="border-b-secondary space-y-8 border-b-1 p-12">
         <div className="mx-auto -mt-20 w-fit">
           <span
-            className={`fi fi-${country?.cca2?.toLowerCase()} rounded-md text-[192px]`}
+            className={`fi fi-${country?.cca2?.toLowerCase()} rounded-md text-[176px]`}
           ></span>
         </div>
         <hgroup className="space-y-2 text-center">
@@ -56,16 +56,16 @@ const CountryDetail = () => {
           <p>{country?.name?.official}</p>
         </hgroup>
         <div className="flex items-center justify-center gap-10">
-          <div className="bg-secondary flex items-center rounded-xl px-4 py-2">
+          <div className="bg-secondary flex flex-col items-center gap-4 rounded-xl px-4 py-2 md:flex-row">
             <div>Population</div>
-            <div className="bg-primary mx-4 h-8 w-px"></div>
+            <div className="bg-primary hidden h-8 w-px md:block"></div>
             <div>{country?.population?.toLocaleString()}</div>
           </div>
-          <div className="bg-secondary flex items-center rounded-xl px-4 py-2">
+          <div className="bg-secondary flex flex-col items-center gap-4 rounded-xl px-4 py-2 md:flex-row">
             <div>
               Area (km<sup>2</sup>)
             </div>
-            <div className="bg-primary mx-4 h-8 w-px"></div>
+            <div className="bg-primary hidden h-8 w-px md:block"></div>
             <div>{country?.area?.toLocaleString()}</div>
           </div>
         </div>
@@ -115,7 +115,7 @@ const CountryDetail = () => {
                   }
                 >
                   <span
-                    className={`fi fi-${neighbor?.cca2?.toLowerCase()} rounded-md text-8xl`}
+                    className={`fi fi-${neighbor?.cca2?.toLowerCase()} rounded-md text-6xl`}
                   ></span>
                 </Link>
               </div>

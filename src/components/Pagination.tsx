@@ -1,11 +1,12 @@
 import { usePagination, DOTS } from "../hooks/usePagination";
+import useScreen from "../hooks/useScreen";
 import { cn } from "../lib/utils";
 import "./pagination.css";
 
 const Pagination = ({
   onPageChange,
   totalCount,
-  siblingCount = 1,
+  siblingCount = 0,
   currentPage,
   pageSize,
 }: {
@@ -21,6 +22,8 @@ const Pagination = ({
     siblingCount,
     pageSize,
   }) as (string | number)[];
+
+  const screenWidth = useScreen();
 
   if (currentPage === 0 || paginationRange.length < 2) {
     return null;
@@ -46,7 +49,7 @@ const Pagination = ({
         <div className="arrow left" />
       </li>
       {paginationRange.map((pageNumber, idx) => {
-        if (pageNumber === DOTS) {
+        if (pageNumber === DOTS && screenWidth > 1024) {
           return (
             <li key={idx} className="pagination-item dots">
               &#8230;
@@ -58,7 +61,7 @@ const Pagination = ({
           <li
             key={idx}
             className={cn(
-              "pagination-item",
+              "pagination-item pagination-number",
               pageNumber === currentPage ? "selected" : null,
             )}
             onClick={() => onPageChange(pageNumber as number)}
