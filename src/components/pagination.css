@@ -69,3 +69,13 @@
     transform: rotate(45deg);
   }
 }
+
+.pagination-number {
+  display: none;
+}
+
+@media screen and (min-width: 1024px) {
+  .pagination-number {
+    display: flex;
+  }
+}

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import SearchIcon from "../assets/SearchIcon";
 import SortComponent from "../components/SortComponent";
 import CountryRanking from "../components/CountryRanking";
+import useScreen from "../hooks/useScreen";
 
 export type Regions =
   | "americas"
@@ -32,13 +33,8 @@ function Home() {
   const [updatedCountriesData, setUpdatedCountriesData] = useState<Country[]>(
     [],
   );
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-  useEffect(() => {
-    const setCurrentWidth = () => setScreenWidth(window.innerWidth);
-    window.addEventListener("resize", setCurrentWidth);
-    return () => window.removeEventListener("resize", setCurrentWidth);
-  }, []);
+  const screenWidth = useScreen();
 
   useEffect(() => {
     const getCountries = async () => {

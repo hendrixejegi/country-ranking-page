@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import Pagination from "./Pagination";
 import { useNavigate } from "react-router";
+import useScreen from "../hooks/useScreen";
 
 const PageSize = 10;
 
@@ -14,6 +15,8 @@ const CountryRanking = ({ countries }: { countries: Country[] }) => {
     return countries.slice(firstPageIndex, lastPageIndex);
   }, [currentPage, countries]);
 
+  const screenWidth = useScreen();
+
   return (
     <>
       <table className="country-table w-full py-4">
@@ -22,10 +25,12 @@ const CountryRanking = ({ countries }: { countries: Country[] }) => {
             <th>Flag</th>
             <th>Name</th>
             <th>Population</th>
-            <th>
-              Area(Km<sup>2</sup>)
-            </th>
-            <th>Region</th>
+            {screenWidth > 512 && (
+              <th>
+                Area(Km<sup>2</sup>)
+              </th>
+            )}
+            {screenWidth > 1024 && <th>Region</th>}
           </tr>
         </thead>
         <tbody>
@@ -46,8 +51,8 @@ const CountryRanking = ({ countries }: { countries: Country[] }) => {
               </td>
               <td>{country?.name?.common}</td>
               <td>{country?.population}</td>
-              <td>{country?.area}</td>
-              <td>{country?.region}</td>
+              {screenWidth > 512 && <td>{country?.area}</td>}
+              {screenWidth > 1024 && <td>{country?.region}</td>}
             </tr>
           ))}
         </tbody>
